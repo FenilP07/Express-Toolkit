@@ -1,5 +1,5 @@
 {
-  "name": "@fenilpatel/express-nexus",
+ "name": "@stranger07/express-nexus",
   "version": "1.0.0",
   "description": "Standardized Express utilities for error handling and logging",
   "type": "module",
