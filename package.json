@@ -1,9 +1,10 @@
 {
- "name": "@stranger07/express-nexus",
+ "name": "excore",
   "version": "1.0.0",
   "description": "Standardized Express utilities for error handling and logging",
   "type": "module",
   "main": "src/index.js",
+  "license": "MIT",
   "files": [
     "src",
     "README.md"
