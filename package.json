@@ -1,0 +1,29 @@
+{
+  "name": "@fenilpatel/express-nexus",
+  "version": "1.0.0",
+  "description": "Standardized Express utilities for error handling and logging",
+  "type": "module",
+  "main": "src/index.js",
+  "files": [
+    "src",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "start": "node src/index.js"
+  },
+  "peerDependencies": {
+    "express": "^4.18.0 || ^5.0.0",
+    "mongoose": "^7.0.0 || ^8.0.0"
+  },
+  "dependencies": {
+    "winston": "^3.11.0"
+  },
+  "devDependencies": {
+    "jest": "^30.3.0",
+    "supertest": "^7.2.2"
+  }
+}
