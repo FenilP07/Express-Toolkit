@@ -1,6 +1,6 @@
 {
   "name": "exnexus",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Standardized Express utilities for error handling and logging",
   "type": "module",
   "main": "src/index.js",
