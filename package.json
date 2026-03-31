@@ -1,17 +1,40 @@
 {
- "name": "excore",
+  "name": "exnexus",
   "version": "1.0.0",
   "description": "Standardized Express utilities for error handling and logging",
   "type": "module",
   "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "types": "index.d.ts",
   "license": "MIT",
+  "author": "Fenil Patel",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FenilP07/Express-Toolkit"
+  },
   "files": [
     "src",
+    "index.d.ts",
     "README.md"
   ],
+  "sideEffects": false,
   "engines": {
     "node": ">=18.0.0"
   },
+  "keywords": [
+    "express",
+    "middleware",
+    "error-handling",
+    "async-handler",
+    "nodejs",
+    "api",
+    "backend",
+    "logger",
+    "winston",
+    "mongoose"
+  ],
   "scripts": {
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "start": "node src/index.js"
