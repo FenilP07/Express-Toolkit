@@ -28,7 +28,8 @@ app.use(errorHandler);`;
 export const exampleCards = [
   {
     title: "Async route handling",
-    description: "Keep controllers clean by removing repetitive try/catch blocks.",
+    description:
+      "Keep controllers clean by removing repetitive try/catch blocks.",
     code: `import { asyncHandler } from "exnexus";
 
 router.get(
@@ -41,7 +42,8 @@ router.get(
   },
   {
     title: "Standard API responses",
-    description: "Send consistent success payloads that your frontend can depend on.",
+    description:
+      "Send consistent success payloads that your frontend can depend on.",
     code: `import { ApiResponse } from "exnexus";
 
 return res
@@ -50,7 +52,8 @@ return res
   },
   {
     title: "Operational errors",
-    description: "Throw structured errors with clear HTTP intent and readable messages.",
+    description:
+      "Throw structured errors with clear HTTP intent and readable messages.",
     code: `import { errors } from "exnexus";
 
 if (!post) {
@@ -59,7 +62,44 @@ if (!post) {
   },
   {
     title: "Global error middleware",
-    description: "Handle app-wide errors from a single place near the bottom of your setup.",
+    description:
+      "Handle app-wide errors from a single place near the bottom of your setup.",
+    code: `import { errorHandler } from "exnexus";
+
+app.use(errorHandler);`,
+  },
+];
+
+export const heroSnippets = [
+  {
+    title: "async-handler.js",
+    code: `import { asyncHandler } from "exnexus";
+
+router.get("/users/:id",
+  asyncHandler(async (req, res) => {
+    const user = await User.findById(req.params.id);
+    res.json(user);
+  })
+);`,
+  },
+  {
+    title: "response.js",
+    code: `import { ApiResponse } from "exnexus";
+
+return res
+  .status(201)
+  .json(new ApiResponse(201, user, "Created"));`,
+  },
+  {
+    title: "errors.js",
+    code: `import { errors } from "exnexus";
+
+if (!post) {
+  throw errors.notFound("Post not found");
+}`,
+  },
+  {
+    title: "middleware.js",
     code: `import { errorHandler } from "exnexus";
 
 app.use(errorHandler);`,

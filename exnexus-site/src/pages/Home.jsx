@@ -1,24 +1,27 @@
 import Navbar from "../components/Navbar";
 import Hero from "../components/Hero";
-import CodePreview from "../components/CodePreview";
 import FeatureGrid from "../components/FeatureGrid";
 import SectionTitle from "../components/SectionTitle";
 import InstallBlock from "../components/InstallBlock";
 import Footer from "../components/Footer";
-import { heroCode } from "../data/examples";
+import HeroCodeStack from "../components/HeroCodeStack";
 
 export default function Home() {
   return (
-    <div className="min-h-screen text-white">
+    <div className="min-h-screen bg-[#030711] text-white">
       <Navbar />
 
-      <main className="relative overflow-hidden">
+      <main className="relative">
         <div className="pointer-events-none absolute inset-0 grid-fade opacity-40" />
 
-        <section className="container-shell grid min-h-[78vh] items-center gap-12 py-14 lg:grid-cols-[1.15fr_0.85fr] lg:py-20">
+        <section className="container-shell grid min-h-[85vh] items-center gap-16 py-20 lg:grid-cols-[0.8fr_1.2fr]">
+          <div className="flex items-center justify-center lg:justify-start">
+            <HeroCodeStack />
+          </div>
+
           <Hero />
-          <CodePreview code={heroCode} />
         </section>
+
         <section className="container-shell py-8">
           <SectionTitle
             eyebrow="Features"
@@ -47,6 +50,7 @@ export default function Home() {
                   scale, and easier to debug.
                 </p>
               </div>
+
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="rounded-[24px] border border-white/8 bg-black/20 p-5">
                   <div className="text-3xl font-semibold">Faster</div>
@@ -76,10 +80,12 @@ export default function Home() {
             </div>
           </div>
         </section>
+
         <section className="container-shell pb-16">
           <InstallBlock />
         </section>
       </main>
+
       <Footer />
     </div>
   );
