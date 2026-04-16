@@ -1,7 +1,6 @@
-
 # exnexus 🚀
 
-**exnexus** is a lightweight, standardized utility belt for Node.js Express applications. It provides the essential "mechanical necessities" every backend needs: centralized error handling, performance logging, semantic error creators, and unified API responses.
+**exnexus** is a lightweight, production-ready utility belt for Node.js Express applications. It provides the core backend essentials every API needs: centralized error handling, structured responses, request logging, semantic error creators, and optional MongoDB connection helpers.
 
 ---
 
@@ -13,20 +12,31 @@
 
 ## ✨ Features
 
-- **asyncHandler**: Eliminate `try/catch` boilerplate in your controllers.
-- **responseEnhancer**: Syntactic sugar for `res.success()`, `res.created()`, and more.
-- **errors Utility**: Semantic error creators like `errors.notFound()` or `errors.badRequest()`.
-- **requestLogger**: Real-time performance monitoring and HTTP request logging.
-- **ApiError & ApiResponse**: Consistent JSON contracts for seamless frontend integration.
-- **errorHandler**: Global middleware for catching and formatting errors (includes Mongoose support).
+* **asyncHandler**: Eliminate repetitive `try/catch` blocks in async controllers.
+* **responseEnhancer**: Add expressive helpers like `res.success()`, `res.created()`, `res.fail()`, and more.
+* **errors Utility**: Create semantic HTTP errors like `errors.notFound()` or `errors.badRequest()`.
+* **requestLogger**: Log HTTP requests with method, URL, status, and response duration.
+* **ApiError & ApiResponse**: Standardized JSON contracts for errors and successful responses.
+* **errorHandler**: Global middleware for formatting and handling errors consistently.
+* **connectDB**: Optional MongoDB connection helper for Mongoose users.
 
 ---
 
 ## 📦 Installation
 
+### Core package
+
 ```bash
 npm install exnexus
 ```
+
+### With MongoDB support
+
+```bash
+npm install exnexus mongoose
+```
+
+> `mongoose` is an **optional peer dependency** and is only needed if you use `connectDB()`.
 
 ---
 
@@ -34,40 +44,141 @@ npm install exnexus
 
 ### 1. Initialize Global Middleware
 
-In your `app.js`, set up the enhancers and loggers early. The error handler must always be last.
-
 ```js
 import express from "express";
 import { responseEnhancer, requestLogger, errorHandler } from "exnexus";
 
 const app = express();
 
-app.use(requestLogger);    // Logs method, URL, status, and duration
-app.use(responseEnhancer); // Attaches .success(), .created(), etc. to 'res'
+app.use(express.json());
+app.use(requestLogger);
+app.use(responseEnhancer);
 
 // ... your routes ...
 
-// The global error interceptor must be the last middleware
 app.use(errorHandler);
 ```
 
-### 2. Clean Controllers
+---
 
-Combine `asyncHandler` and `responseEnhancer` for highly readable, standardized controllers:
+### 2. Write Clean Controllers
 
 ```js
 import { asyncHandler, errors } from "exnexus";
 
 export const getProfile = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id);
+
   if (!user) {
-    // Automatically caught by errorHandler and logged by Winston
     throw errors.notFound("User not found");
   }
-  // Consistent structure: { success: true, data: {...}, message: "..." }
+
   return res.success(user, "Profile retrieved successfully");
 });
 ```
+
+---
+
+### 3. Optional MongoDB Connection
+
+```js
+import express from "express";
+import {
+  connectDB,
+  responseEnhancer,
+  requestLogger,
+  errorHandler,
+} from "exnexus";
+
+const app = express();
+
+await connectDB({
+  uri: process.env.MONGO_URI,
+  retries: 3,
+  retryDelay: 3000,
+});
+
+app.use(express.json());
+app.use(requestLogger);
+app.use(responseEnhancer);
+
+// ... routes ...
+
+app.use(errorHandler);
+
+app.listen(5000, () => {
+  console.log("Server running on port 5000");
+});
+```
+
+---
+
+## 🧩 Response Helpers
+
+```js
+res.success(data, "Fetched successfully");
+res.created(data, "Created successfully");
+res.fail("Something went wrong");
+```
+
+Example:
+
+```json
+{
+  "success": true,
+  "message": "Fetched successfully",
+  "data": {
+    "id": 1
+  }
+}
+```
+
+---
+
+## ❌ Error Handling Example
+
+```js
+import { asyncHandler, errors } from "exnexus";
+
+export const getUser = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id);
+
+  if (!user) {
+    throw errors.notFound("User not found");
+  }
+
+  return res.success(user);
+});
+```
+
+---
+
+## 🛢️ MongoDB Helper
+
+```js
+import { connectDB } from "exnexus";
+
+await connectDB({
+  uri: process.env.MONGO_URI,
+  retries: 3,
+  retryDelay: 5000,
+  exitOnFailure: true,
+});
+```
+
+### Options
+
+| Option           | Type     | Default               | Description                 |
+| ---------------- | -------- | --------------------- | --------------------------- |
+| `uri`            | string   | process.env.MONGO_URI | MongoDB connection string   |
+| `options`        | object   | {}                    | Mongoose connection options |
+| `retries`        | number   | 3                     | Retry attempts              |
+| `retryDelay`     | number   | 5000                  | Delay between retries       |
+| `exitOnFailure`  | boolean  | true                  | Exit process on failure     |
+| `logger`         | object   | console               | Logger instance             |
+| `onConnected`    | function | -                     | Callback on connect         |
+| `onError`        | function | -                     | Callback on error           |
+| `onDisconnected` | function | -                     | Callback on disconnect      |
 
 ---
 
@@ -75,32 +186,25 @@ export const getProfile = asyncHandler(async (req, res) => {
 
 ```
 src/
+├── db/
+├── middlewares/
 ├── utils/
-│   ├── ApiError.js         # Consistent error formatting
-│   ├── ApiResponse.js      # Consistent success structure
-│   ├── asyncHandler.js     # Promise wrapper for routes
-│   ├── errors.js           # Semantic error creators
-│   ├── logger.js           # Winston configuration
-│   └── responseEnhancer.js # Express res.success() helpers
-└── middlewares/
-    ├── error.middleware.js # Global error interceptor
-    └── requestLogger.js    # HTTP request & duration logger
+└── index.js
 ```
 
 ---
 
-## ⚙️ Environment Configuration
+## ⚙️ Environment Variables
 
-| Variable   | Description                                    | Default     |
-|------------|------------------------------------------------|-------------|
-| NODE_ENV   | Set to development to see stack traces in JSON | production  |
-| LOG_LEVEL  | Logging verbosity (info, error, warn, debug)   | info        |
+| Variable  | Description              | Default    |
+| --------- | ------------------------ | ---------- |
+| NODE_ENV  | Show stack traces in dev | production |
+| LOG_LEVEL | Logging level            | info       |
+| MONGO_URI | Mongo connection string  | -          |
 
 ---
 
 ## 🧪 Testing
-
-This project uses Jest to ensure utility reliability and middleware integrity.
 
 ```bash
 npm test
@@ -110,16 +214,18 @@ npm test
 
 ## 🤝 Contributing
 
-Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](https://github.com/FenilP07/Express-Toolkit/issues) or submit a pull request.
+PRs, issues, and ideas are welcome.
+
+GitHub: https://github.com/FenilP07/Express-Toolkit
 
 ---
 
 ## 💬 Support
 
-For questions, suggestions, or support, please open an issue on the [GitHub repository](https://github.com/FenilP07/Express-Toolkit).
+Open an issue for help or questions.
 
 ---
 
 ## 📄 License
 
-This project is licensed under the MIT License.
+MIT License
