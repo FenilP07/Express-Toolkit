@@ -1,6 +1,6 @@
 {
   "name": "exnexus",
-  "version": "1.0.1",
+  "version": "1.1.1",
   "description": "Production-ready Express utilities for error handling, logging, responses, and optional MongoDB connection helpers",
   "type": "module",
   "main": "src/index.js",
@@ -40,12 +40,15 @@
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "start": "node src/index.js"
   },
-  "peerDependencies": {
-    "express": "^4.18.0 || ^5.0.0",
-    "mongoose": "^7.0.0 || ^8.0.0"
+ "peerDependencies": {
+    "express": ">=4.18.0",
+    "mongoose": ">=7.0.0"
   },
   "peerDependenciesMeta": {
     "mongoose": {
+      "optional": true
+    },
+    "express": {
       "optional": true
     }
   },
